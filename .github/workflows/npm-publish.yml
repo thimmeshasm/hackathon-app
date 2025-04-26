@@ -1,10 +1,10 @@
+
 name: Node.js Multi-Service CI
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+
 
 jobs:
   build-and-test:
@@ -18,6 +18,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          name: Node.js Multi-Service CI
+          
+  on:
+  push:
+    branches: [ main ]
+
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies for root
+        if: always() && exists('package.json') # Only run if package.json exists
+        run: npm install
+
 
       - name: Install dependencies for root
         run: npm install
@@ -41,3 +65,22 @@ jobs:
       # Optional: Build Docker image if needed
       - name: Build Docker Image
         run: docker build -t my-node-app:latest .
+
+      - name: Install dependencies for root
+        run: npm install
+
+      - name: Install dependencies for appointment-service
+        working-directory: appointment-service
+        run: npm install
+
+      - name: Run tests for appointment-service
+        working-directory: appointment-service
+        run: npm test
+
+      - name: Install dependencies for patient-service
+        working-directory: patient-service
+        run: npm install
+
+      - name: Run tests for patient-service
+        working-directory: patient-service
+        run: npm test
