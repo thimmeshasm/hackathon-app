@@ -1,33 +1,43 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
-
-name: Node.js Package
+name: Node.js Multi-Service CI
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm ci
-      - run: npm test
 
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          node-version: '20'
+
+      - name: Install dependencies for root
+        run: npm install
+
+      - name: Install dependencies for appointment-service
+        working-directory: appointment-service
+        run: npm install
+
+      - name: Run tests for appointment-service
+        working-directory: appointment-service
+        run: npm test
+
+      - name: Install dependencies for patient-service
+        working-directory: patient-service
+        run: npm install
+
+      - name: Run tests for patient-service
+        working-directory: patient-service
+        run: npm test
+
+      # Optional: Build Docker image if needed
+      - name: Build Docker Image
+        run: docker build -t my-node-app:latest .
