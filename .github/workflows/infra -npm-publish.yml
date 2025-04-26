@@ -39,7 +39,6 @@ jobs:
       - name: Terraform Apply
         working-directory: terraform/EKS
         run: terraform apply -auto-approve
-
       - name: Terraform Output
         working-directory: terraform/EKS
         run: terraform output
