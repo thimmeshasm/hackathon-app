@@ -2,17 +2,19 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    location. For example, to build the `appointment-service branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches:`:
+   ```yaml
+   - name: Build the Docker image for appointment-service
+     run: docker build appointment-service [ "main" ]
 
 jobs:
-
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest --file appointment-service/Dockerfile --tag appointment
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+   -service:$(date +%s)
