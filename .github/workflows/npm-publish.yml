@@ -3,8 +3,7 @@ name: Node.js Appointment Service CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+
 
 jobs:
   build:
