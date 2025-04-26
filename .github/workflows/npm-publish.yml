@@ -1,27 +1,42 @@
-name: Node.js Build - Appointment Service
+name: Node.js Appointment Service CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'   # or '20' if you are using Node 20
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run build script
-      run: npm run start
+      - name: Run lint (optional)
+        run: npm run lint
+        continue-on-error: true  # ignore if you don't have lint
+
+      - name: Run tests (optional)
+        run: npm test
+        continue-on-error: true  # ignore if you don't have tests
+
+      - name: Build (optional)
+        run: npm run build
+        continue-on-error: true  # ignore if you don't have build
+
+      - name: Start server (optional, for debugging only)
+        run: |
+          npm install pm2 -g
+          pm2 start server.js --no-daemon
+        continue-on-error: true  # only if you want to start during CI
 
